@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
+
+body {
+  font-family: 'Press Start 2P', monospace;
+  -webkit-font-smoothing: none;
+  image-rendering: pixelated;
+}
