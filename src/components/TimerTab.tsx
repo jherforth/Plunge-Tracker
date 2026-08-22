@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Play, Square, Volume2, VolumeX, Plus, Minus, Snowflake } from 'lucide-react';
+import { Play, Square, Volume2, VolumeX, Plus, Minus, Snowflake, HelpCircle, X } from 'lucide-react';
 import { cn, formatTime, retroButton, retroCard, retroBorder } from '../lib/utils';
 import { playTrack, stopTrack, playChime } from '../lib/audio';
 import { db } from '../lib/db';
@@ -12,6 +12,7 @@ export default function TimerTab() {
   const [isRunning, setIsRunning] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [showTips, setShowTips] = useState(false);
   
   const startTimeRef = useRef<number | null>(null);
   const frameRef = useRef<number | null>(null);
@@ -196,8 +197,38 @@ export default function TimerTab() {
               <Square size={24} className="mr-2" fill="currentColor" /> STOP
             </button>
           )}
+
+          <button
+            onClick={() => setShowTips(true)}
+            className={cn("p-4 text-sky-600 dark:text-sky-300", retroButton)}
+          >
+            <HelpCircle size={28} />
+          </button>
         </div>
       </div>
+
+      {showTips && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className={cn("w-full max-w-sm flex flex-col p-6 bg-slate-100 dark:bg-slate-900 relative", retroCard)}>
+            <button 
+              onClick={() => setShowTips(false)}
+              className="absolute top-4 right-4 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+            >
+              <X size={24} />
+            </button>
+            <h2 className="text-xl mb-4 font-bold text-sky-800 dark:text-sky-300">PLUNGE TIPS</h2>
+            <ul className="space-y-4 text-sm text-slate-700 dark:text-slate-300 list-decimal list-inside">
+              <li>Start slow and work up to colder temps</li>
+              <li>Don't ease in, commit and fully submerge</li>
+              <li>Control your breathing and stay calm</li>
+              <li>Listen to your body, don't wait for the clock if you're too cold</li>
+              <li>Warm up slowly</li>
+              <li>Always plunge with supervision</li>
+              <li>Build a routine and keep plunging</li>
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
