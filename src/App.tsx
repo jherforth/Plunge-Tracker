@@ -33,7 +33,7 @@ export default function App() {
            </div>
            <h1 className="text-sm leading-loose mb-4">HEALTH WARNING</h1>
            <p className="text-[8px] leading-loose mb-8 text-slate-700 dark:text-slate-300">
-             Cold water immersion can cause cold water shock, hypothermia, and other serious health risks. Consult a physician before starting a cold plunge routine.
+             Cold water immersion can cause cold water shock, hypothermia, and other serious health risks. Consult a physician before starting a cold plunge routine. The developers assume no liability for any injuries, health issues, or other risks associated with cold plunge use.
            </p>
            <button 
              onClick={acceptDisclaimer}

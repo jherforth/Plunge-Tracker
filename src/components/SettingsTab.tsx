@@ -1,4 +1,4 @@
-import { Download, FileJson, FileSpreadsheet, ShieldAlert, Moon, Sun, Thermometer, Music } from 'lucide-react';
+import { Download, FileJson, FileSpreadsheet, ShieldAlert, Moon, Sun, Thermometer, Music, AlertTriangle } from 'lucide-react';
 import { db } from '../lib/db';
 import { useSettings } from '../lib/settings';
 import { cn, retroCard, retroButton } from '../lib/utils';
@@ -155,6 +155,18 @@ export default function SettingsTab() {
             <ShieldAlert size={24} className="text-sky-500" />
             <p className="text-sm leading-loose text-slate-700 dark:text-slate-300">
               THIS APP IS OFFLINE-FIRST. ALL SESSION DATA IS STORED SECURELY IN YOUR BROWSER'S LOCAL INDEXEDDB. NOTHING IS EVER SENT TO EXTERNAL SERVERS.
+            </p>
+          </div>
+        </section>
+        
+        <section>
+          <h2 className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+            DISCLAIMER
+          </h2>
+          <div className={cn("p-6 flex flex-col space-y-4", retroCard)}>
+            <AlertTriangle size={24} className="text-rose-500" />
+            <p className="text-sm leading-loose text-slate-700 dark:text-slate-300">
+              Cold water immersion can cause cold water shock, hypothermia, and other serious health risks. Consult a physician before starting a cold plunge routine. The developers assume no liability for any injuries, health issues, or other risks associated with cold plunge use.
             </p>
           </div>
         </section>
