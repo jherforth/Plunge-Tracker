@@ -5,5 +5,4 @@ export interface PlungeSession {
   targetDurationSeconds: number;
   waterTemperature?: number;
   temperatureUnit?: 'C' | 'F';
-  notes?: string;
 }

@@ -13,9 +13,9 @@ export default function SettingsTab() {
     if (format === 'json') {
       blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     } else {
-      const csv = ['id,timestamp,durationSeconds,targetDurationSeconds,waterTemperature,notes'];
+      const csv = ['id,timestamp,durationSeconds,targetDurationSeconds,waterTemperature'];
       data.forEach(s => {
-        csv.push(`${s.id},${s.timestamp},${s.durationSeconds},${s.targetDurationSeconds},${s.waterTemperature || ''},"${s.notes || ''}"`);
+        csv.push(`${s.id},${s.timestamp},${s.durationSeconds},${s.targetDurationSeconds},${s.waterTemperature || ''}`);
       });
       blob = new Blob([csv.join('\n')], { type: 'text/csv' });
     }
