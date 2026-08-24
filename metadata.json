@@ -1,6 +1,0 @@
-{
-  "name": "Plunge Tracker",
-  "description": "An offline-first, open-source cold plunge session tracker.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

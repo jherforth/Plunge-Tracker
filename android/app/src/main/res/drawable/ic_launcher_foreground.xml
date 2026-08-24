@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Plunge Tracker launcher icon: a snowflake over cold water.
+
+  Drawn as a vector so the icon set contains no binary image files at all,
+  which keeps the repository auditable for F-Droid. Replaces the default
+  Capacitor logo that `npx cap add android` generates, which is Ionic's
+  trademark and must not ship as this app's identity.
+
+  Artwork is original and covered by the project's MIT license.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Snowflake: three crossing arms -->
+    <path
+        android:strokeColor="#E0F2FE"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M54,24 L54,56
+                          M40.1,32 L67.9,48
+                          M40.1,48 L67.9,32" />
+
+    <!-- Snowflake: chevron ticks at each of the six tips -->
+    <path
+        android:strokeColor="#E0F2FE"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M50.6,28.9 L54,24 L57.4,28.9
+                          M50.6,51.1 L54,56 L57.4,51.1
+                          M61.9,48.5 L67.9,48 L65.4,42.6
+                          M46.1,31.5 L40.1,32 L42.6,37.4
+                          M42.6,42.6 L40.1,48 L46.1,48.5
+                          M65.4,37.4 L67.9,32 L61.9,31.5" />
+
+    <!-- Water -->
+    <path
+        android:strokeColor="#7DD3FC"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M26,68 q7,-6 14,0 t14,0 t14,0 t14,0" />
+    <path
+        android:strokeColor="#38BDF8"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M26,79 q7,-6 14,0 t14,0 t14,0 t14,0" />
+
+</vector>

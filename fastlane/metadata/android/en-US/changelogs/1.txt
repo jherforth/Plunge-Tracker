@@ -1,0 +1,8 @@
+First release.
+
+* Countdown timer with an adjustable target duration
+* Session history with duration and water temperature
+* CSV export of your full history
+* Optional ambient soundscapes and completion chimes
+* Celsius/Fahrenheit and light/dark themes
+* Cold plunge safety guidance

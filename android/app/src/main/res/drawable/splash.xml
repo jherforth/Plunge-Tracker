@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Launch screen. Replaces the eleven Capacitor-branded splash.png files that
+  `npx cap add android` generates: those carry Ionic's logo and are binary
+  blobs. A layer-list over a solid colour renders at every density and
+  orientation from a single auditable XML file.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/ic_launcher_background" />
+    <item
+        android:drawable="@drawable/ic_launcher_foreground"
+        android:gravity="center"
+        android:width="180dp"
+        android:height="180dp" />
+</layer-list>

@@ -1,0 +1,22 @@
+Plunge Tracker is a small, deliberately simple timer and logbook for cold water immersion. Set a target, start the timer, get an audible cue when you reach it, and the session is logged with its duration and water temperature.
+
+Everything happens on your device. There is no account to create, no sync service, no analytics, and no advertising. The app never contacts a server.
+
+<b>Features</b>
+
+* Countdown timer with a target you adjust in 15 second steps
+* Audible chimes, synthesised on the fly rather than shipped as recordings
+* Optional ambient soundscapes to hold your attention during a plunge
+* Session history showing duration and water temperature
+* Export your whole history to CSV, so your data is never locked in
+* Celsius or Fahrenheit, switchable at any time
+* Light and dark themes, following your system setting by default
+* Built-in cold plunge safety guidance
+
+<b>Privacy</b>
+
+Sessions are stored in the app's own private storage and never leave the device. The app requests a single Android permission, INTERNET, which its WebView requires in order to load the interface that is bundled inside the app itself. No request is ever made to the network, and the app ships a network security configuration that blocks cleartext traffic and refuses user-installed certificate authorities.
+
+<b>Safety</b>
+
+Cold water immersion carries real risks, including cold shock response, impaired swimming ability and hypothermia. This app is a timer and a notebook. It is not medical advice and it cannot supervise you. Never plunge alone, ease into the practice gradually, and talk to a doctor first if you have a heart condition, high blood pressure, or are pregnant.

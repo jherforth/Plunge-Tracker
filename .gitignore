@@ -1,8 +1,15 @@
 node_modules/
-build/
 dist/
 coverage/
 .DS_Store
 *.log
-.env*
-!.env.example
+.env
+.env.*
+
+# Android build outputs and local machine config.
+# Note: package-lock.json is deliberately NOT ignored - F-Droid builds with
+# `npm ci`, which requires the lockfile to be committed for a reproducible tree.
+android/local.properties
+android/.idea/
+*.keystore
+*.jks

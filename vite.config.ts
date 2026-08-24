@@ -1,22 +1,13 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
-import path from 'path';
 import {defineConfig} from 'vite';
 
-export default defineConfig(() => {
-  return {
-    plugins: [react(), tailwindcss()],
-    resolve: {
-      alias: {
-        '@': path.resolve(__dirname, '.'),
-      },
-    },
-    server: {
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
-      hmr: process.env.DISABLE_HMR !== 'true',
-      // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
-      watch: process.env.DISABLE_HMR === 'true' ? null : {},
-    },
-  };
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+  build: {
+    // Capacitor copies this directory into the APK as the app's web assets.
+    outDir: 'dist',
+    // Inline nothing as base64 so bundled assets (the font) stay auditable files.
+    assetsInlineLimit: 0,
+  },
 });

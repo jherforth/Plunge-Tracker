@@ -1,6 +1,19 @@
 @import "tailwindcss";
 @variant dark (&:where(.dark, .dark *));
 
+/*
+ * Press Start 2P is bundled locally (src/assets/fonts/) rather than loaded from
+ * a CDN, so the app makes no network requests at runtime.
+ * Licensed under the SIL Open Font License 1.1 - see src/assets/fonts/OFL.txt.
+ */
+@font-face {
+  font-family: 'Press Start 2P';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/press-start-2p-latin.woff2') format('woff2');
+}
+
 body {
   font-family: 'Press Start 2P', monospace;
   -webkit-font-smoothing: none;

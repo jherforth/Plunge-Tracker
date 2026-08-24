@@ -1,9 +1,9 @@
 /**
  * @license
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: MIT
  */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Timer, List, Settings, AlertTriangle } from 'lucide-react';
 import { cn, retroCard, retroButton } from './lib/utils';
 import TimerTab from './components/TimerTab';

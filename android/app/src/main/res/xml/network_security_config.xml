@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Plunge Tracker is fully offline. Capacitor still requires the INTERNET
+  permission because its WebView loads the bundled app over an intercepted
+  https://localhost origin, but no request ever leaves the device.
+
+  This config makes that guarantee enforceable rather than merely stated:
+  all cleartext traffic is denied, and the app trusts only the system CA
+  store (never user-installed CAs), so no proxy can silently exfiltrate data.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>
