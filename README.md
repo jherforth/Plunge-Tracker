@@ -17,14 +17,21 @@ APK, and everything it records stays on the device:
   ([`src/lib/audio.ts`](src/lib/audio.ts)), not shipped as audio files
 - The interface font is bundled locally rather than fetched from a font CDN
 
-The app declares exactly one permission, `INTERNET`. Capacitor requires it
-because the WebView loads the bundled interface over an intercepted
+The only permission the app requests for itself is `INTERNET`. Capacitor
+requires it because the WebView loads the bundled interface over an intercepted
 `https://localhost` origin, which passes through Android's network stack even
 though the bytes come from the APK's own assets. Nothing is ever sent off the
 device, and
 [`network_security_config.xml`](android/app/src/main/res/xml/network_security_config.xml)
 enforces this by denying cleartext traffic and refusing user-installed
 certificate authorities.
+
+The built APK also lists a second entry,
+`io.github.jherforth.plungetracker.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`.
+That one is generated automatically by AndroidX Core, is namespaced to this
+app's own package, and is declared `protectionLevel="signature"`, so only code
+signed with the same key can ever hold it. It grants no access to the device or
+to your data, and it is not something this project declares by hand.
 
 ## Safety
 
