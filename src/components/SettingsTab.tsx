@@ -1,31 +1,77 @@
+import { useState } from 'react';
 import { Download, FileJson, FileSpreadsheet, ShieldAlert, Moon, Sun, Thermometer, Music, AlertTriangle } from 'lucide-react';
+import { Capacitor } from '@capacitor/core';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 import { db } from '../lib/db';
 import { useSettings } from '../lib/settings';
 import { cn, retroCard, retroButton } from '../lib/utils';
 
+type ExportStatus = { kind: 'idle' } | { kind: 'working' } | { kind: 'done' } | { kind: 'error'; message: string };
+
 export default function SettingsTab() {
   const { theme, setTheme, tempUnit, setTempUnit, selectedTrack, setSelectedTrack } = useSettings();
+  const [exportStatus, setExportStatus] = useState<ExportStatus>({ kind: 'idle' });
+
+  const buildExport = async (format: 'json' | 'csv') => {
+    const data = await db.sessions.toArray();
+
+    if (format === 'json') {
+      return { contents: JSON.stringify(data, null, 2), mimeType: 'application/json' };
+    }
+
+    const csv = ['id,timestamp,durationSeconds,targetDurationSeconds,waterTemperature'];
+    data.forEach(s => {
+      csv.push(`${s.id},${s.timestamp},${s.durationSeconds},${s.targetDurationSeconds},${s.waterTemperature ?? ''}`);
+    });
+    return { contents: csv.join('\n'), mimeType: 'text/csv' };
+  };
 
   const exportData = async (format: 'json' | 'csv') => {
-    const data = await db.sessions.toArray();
-    let blob;
-    
-    if (format === 'json') {
-      blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    } else {
-      const csv = ['id,timestamp,durationSeconds,targetDurationSeconds,waterTemperature'];
-      data.forEach(s => {
-        csv.push(`${s.id},${s.timestamp},${s.durationSeconds},${s.targetDurationSeconds},${s.waterTemperature || ''}`);
-      });
-      blob = new Blob([csv.join('\n')], { type: 'text/csv' });
+    setExportStatus({ kind: 'working' });
+    try {
+      const { contents, mimeType } = await buildExport(format);
+      const fileName = `plunge-sessions.${format}`;
+
+      if (Capacitor.isNativePlatform()) {
+        // Android's WebView ignores the <a download> attribute and swallows
+        // navigation to blob: URLs, so the browser download idiom below fails
+        // silently here. Write a real file instead and hand it to the system
+        // share sheet, which lets the user save it or send it anywhere.
+        // Directory.Cache needs no storage permission.
+        await Filesystem.writeFile({
+          path: fileName,
+          data: contents,
+          directory: Directory.Cache,
+          encoding: Encoding.UTF8,
+        });
+
+        const { uri } = await Filesystem.getUri({ path: fileName, directory: Directory.Cache });
+        await Share.share({ title: fileName, files: [uri] });
+      } else {
+        const url = URL.createObjectURL(new Blob([contents], { type: mimeType }));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        // Firefox only honours a click on an anchor that is in the document.
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      setExportStatus({ kind: 'done' });
+    } catch (err) {
+      // The share sheet reports a plain cancellation as an error; that is not
+      // a failure worth showing the user.
+      const message = err instanceof Error ? err.message : String(err);
+      if (/cancel/i.test(message)) {
+        setExportStatus({ kind: 'idle' });
+        return;
+      }
+      console.error('Export failed', err);
+      setExportStatus({ kind: 'error', message });
     }
-    
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `plunge-sessions.${format}`;
-    a.click();
-    URL.revokeObjectURL(url);
   };
 
   return (
@@ -144,6 +190,18 @@ export default function SettingsTab() {
               </div>
               <Download size={16} className="text-slate-500" />
             </button>
+
+            {exportStatus.kind === 'working' && (
+              <p className="text-xs text-slate-500 dark:text-slate-400">EXPORTING...</p>
+            )}
+            {exportStatus.kind === 'done' && (
+              <p className="text-xs text-sky-600 dark:text-sky-400">EXPORT READY.</p>
+            )}
+            {exportStatus.kind === 'error' && (
+              <p className="text-xs text-red-600 dark:text-red-400 leading-relaxed">
+                EXPORT FAILED: {exportStatus.message.toUpperCase()}
+              </p>
+            )}
           </div>
         </section>
 
