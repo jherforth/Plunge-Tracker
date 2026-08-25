@@ -102,6 +102,18 @@ obvious:
   so ruamel's 80-column default re-folds longer lines. Inside a build entry the
   usable budget is 72. `sudo` commands are joined with `; ` into a single shell,
   so a `cd` can be used to keep paths short.
+- **LF line endings.** `rewritemeta` writes LF, so a CRLF copy diffs on every
+  line. `.gitattributes` pins this repo to LF. GitLab's web editor preserves a
+  file's existing endings, so a CRLF file there cannot be fixed by editing it -
+  delete it and re-upload instead.
+
+One more trap: **`init` runs in `subdir`, not the repository root.**
+fdroidserver sets `root_dir = build_dir/subdir` and runs both `init` and
+`prebuild` there, so with `subdir: android/app` the npm commands execute inside
+the Android app module - where there is no `package.json`, and no `android/`
+directory for `cap sync` to find. The recipe therefore starts `init` with
+`cd ../..`; the commands are joined with `; ` into a single shell, so one `cd`
+covers all of them.
 
 F-Droid builds the app itself from this repository and signs it with its own key,
 so no signing key or `local.properties` should ever be committed here.

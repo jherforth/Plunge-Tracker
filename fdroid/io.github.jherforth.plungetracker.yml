@@ -22,6 +22,7 @@ Builds:
       - apt-get update
       - apt-get install -y -t forky nodejs npm
     init:
+      - cd ../..
       - npm ci
       - npm run build
       - npx cap sync android
