@@ -80,6 +80,29 @@ deliberately not committed, so the published app is always built from source.
    into a fork of [fdroiddata](https://gitlab.com/fdroid/fdroiddata) as
    `metadata/io.github.jherforth.plungetracker.yml` and open a merge request.
 
+### Notes on the build recipe
+
+The recipe installs Node from Debian **forky** (nodejs 24.19.0, npm 11.16.0).
+The buildserver's own nodejs is 18.x, which is too old: `@capacitor/cli`
+requires `>=20.0.0` and `@vitejs/plugin-react` requires
+`^20.19.0 || >=22.12.0`. `npm` is a separate Debian package, so both are
+installed explicitly.
+
+`commit:` is pinned to a full 40-character hash rather than a tag, at F-Droid's
+request: a tag can be moved after review, a hash cannot.
+
+The recipe file itself must be kept in canonical form or the `fdroid
+rewritemeta` CI job fails. Two constraints follow from that, and neither is
+obvious:
+
+- **No comments.** `rewritemeta` rebuilds the file from parsed data rather than
+  round-tripping it, so any comment is silently dropped and the resulting diff
+  fails the job. That is why the reasoning above lives here and not in the YAML.
+- **No line over 80 characters.** The writer sets an indent but never a width,
+  so ruamel's 80-column default re-folds longer lines. Inside a build entry the
+  usable budget is 72. `sudo` commands are joined with `; ` into a single shell,
+  so a `cd` can be used to keep paths short.
+
 F-Droid builds the app itself from this repository and signs it with its own key,
 so no signing key or `local.properties` should ever be committed here.
 
