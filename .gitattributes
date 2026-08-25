@@ -1,0 +1,19 @@
+# This repo is built on Linux (F-Droid's buildserver, CI), so text files must
+# use LF in the working tree as well as in the object store. Without this,
+# core.autocrlf=true on Windows checks these files out with CRLF, and anything
+# copied out of the working tree carries the CRLF with it.
+#
+# This bit us once already: the F-Droid recipe was copied into fdroiddata with
+# CRLF endings, and `fdroid rewritemeta` (which writes LF) reported the entire
+# file as changed.
+* text=auto eol=lf
+
+# Windows batch files genuinely need CRLF or cmd.exe misparses them.
+*.bat text eol=crlf
+
+# Never touch binaries.
+*.woff2 binary
+*.jar binary
+*.keystore binary
+*.png binary
+*.apk binary
