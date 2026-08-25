@@ -5,6 +5,7 @@ Everything happens on your device. There is no account to create, no sync servic
 <b>Features</b>
 
 * Countdown timer with a target you adjust in 15 second steps
+* An optional 10 second run-up that counts you in, so you are not already losing time while you climb into the water
 * Audible chimes, synthesised on the fly rather than shipped as recordings
 * Optional ambient soundscapes to hold your attention during a plunge
 * Session history showing duration and water temperature
@@ -15,7 +16,9 @@ Everything happens on your device. There is no account to create, no sync servic
 
 <b>Privacy</b>
 
-Sessions are stored in the app's own private storage and never leave the device. The app requests a single Android permission, INTERNET, which its WebView requires in order to load the interface that is bundled inside the app itself. No request is ever made to the network, and the app ships a network security configuration that blocks cleartext traffic and refuses user-installed certificate authorities.
+Sessions are stored in the app's own private storage and never leave the device. The only permission the app asks for is INTERNET, which its WebView requires in order to load the interface that is bundled inside the app itself. No request is ever made to the network, and the app ships a network security configuration that blocks cleartext traffic and refuses user-installed certificate authorities.
+
+You may also see a second entry, DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION. That one is generated automatically by the AndroidX libraries, is scoped to this app's own package, and can only ever be held by code signed with the same key. It grants no access to your device or your data.
 
 <b>Safety</b>
 

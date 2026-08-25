@@ -1,1 +1,1 @@
-Offline cold plunge timer and session log. No accounts, no network, no tracking.
+Offline cold plunge timer and log. No accounts, no network, no tracking.
