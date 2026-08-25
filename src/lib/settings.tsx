@@ -4,6 +4,9 @@ export type Theme = 'light' | 'dark';
 export type TempUnit = 'C' | 'F';
 export type TrackId = 'none' | 'ice-cave' | 'blizzard' | 'crystal';
 
+/** Seconds of lead-in given to get into the water before the plunge timer starts. */
+export const LEAD_IN_SECONDS = 10;
+
 interface SettingsContextType {
   theme: Theme;
   setTheme: (t: Theme) => void;
@@ -11,6 +14,8 @@ interface SettingsContextType {
   setTempUnit: (u: TempUnit) => void;
   selectedTrack: TrackId;
   setSelectedTrack: (t: TrackId) => void;
+  leadInEnabled: boolean;
+  setLeadInEnabled: (v: boolean) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -27,6 +32,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
   const [selectedTrack, setSelectedTrack] = useState<TrackId>(() => {
     return (localStorage.getItem('plungeTrack') as TrackId) || 'ice-cave';
+  });
+
+  const [leadInEnabled, setLeadInEnabled] = useState<boolean>(() => {
+    // Defaults on: hitting START and immediately being on the clock leaves no
+    // time to actually get into the water.
+    return localStorage.getItem('plungeLeadIn') !== 'false';
   });
 
   useEffect(() => {
@@ -49,8 +60,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('plungeTrack', selectedTrack);
   }, [selectedTrack]);
 
+  useEffect(() => {
+    localStorage.setItem('plungeLeadIn', String(leadInEnabled));
+  }, [leadInEnabled]);
+
   return (
-    <SettingsContext.Provider value={{ theme, setTheme, tempUnit, setTempUnit, selectedTrack, setSelectedTrack }}>
+    <SettingsContext.Provider value={{ theme, setTheme, tempUnit, setTempUnit, selectedTrack, setSelectedTrack, leadInEnabled, setLeadInEnabled }}>
       {children}
     </SettingsContext.Provider>
   );

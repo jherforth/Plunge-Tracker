@@ -1,16 +1,16 @@
 import { useState } from 'react';
-import { Download, FileJson, FileSpreadsheet, ShieldAlert, Moon, Sun, Thermometer, Music, AlertTriangle } from 'lucide-react';
+import { Download, FileJson, FileSpreadsheet, ShieldAlert, Moon, Sun, Thermometer, Music, AlertTriangle, Timer } from 'lucide-react';
 import { Capacitor } from '@capacitor/core';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { db } from '../lib/db';
-import { useSettings } from '../lib/settings';
+import { useSettings, LEAD_IN_SECONDS } from '../lib/settings';
 import { cn, retroCard, retroButton } from '../lib/utils';
 
 type ExportStatus = { kind: 'idle' } | { kind: 'working' } | { kind: 'done' } | { kind: 'error'; message: string };
 
 export default function SettingsTab() {
-  const { theme, setTheme, tempUnit, setTempUnit, selectedTrack, setSelectedTrack } = useSettings();
+  const { theme, setTheme, tempUnit, setTempUnit, selectedTrack, setSelectedTrack, leadInEnabled, setLeadInEnabled } = useSettings();
   const [exportStatus, setExportStatus] = useState<ExportStatus>({ kind: 'idle' });
 
   const buildExport = async (format: 'json' | 'csv') => {
@@ -109,6 +109,34 @@ export default function SettingsTab() {
                     {track.label}
                   </button>
                 ))}
+              </div>
+            </div>
+
+            <div className={cn("w-full flex items-center justify-between p-4 bg-white dark:bg-black", retroCard)}>
+              <div className="flex items-center space-x-3">
+                <div className="text-sky-500">
+                  <Timer size={20} />
+                </div>
+                <div className="text-sm">
+                  {LEAD_IN_SECONDS}S RUN-UP
+                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    TIME TO GET IN BEFORE THE CLOCK STARTS
+                  </div>
+                </div>
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setLeadInEnabled(true)}
+                  className={cn("px-3 py-2 text-sm", retroButton, leadInEnabled ? "bg-sky-400 text-black" : "bg-slate-200 dark:bg-slate-800")}
+                >
+                  ON
+                </button>
+                <button
+                  onClick={() => setLeadInEnabled(false)}
+                  className={cn("px-3 py-2 text-sm", retroButton, !leadInEnabled ? "bg-sky-400 text-black" : "bg-slate-200 dark:bg-slate-800")}
+                >
+                  OFF
+                </button>
               </div>
             </div>
 
