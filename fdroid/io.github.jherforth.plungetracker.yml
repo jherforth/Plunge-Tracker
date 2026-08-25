@@ -14,20 +14,16 @@ Repo: https://github.com/jherforth/Plunge-Tracker.git
 Builds:
   - versionName: 1.0.0
     versionCode: 1
-    commit: v1.0.0
+    commit: e20f93720c960844c0a7aac167560b077db0c9db
     subdir: android/app
     sudo:
       # The app is a React/Vite web app packaged with Capacitor, so the build
-      # needs Node. The buildserver's packaged Node (18.x on bookworm) is too
-      # old: @capacitor/cli requires >=20.0.0 and @vitejs/plugin-react requires
-      # ^20.19.0 || >=22.12.0. Install a pinned Node 22 LTS and verify it
-      # against the checksum published on nodejs.org.
-      - curl -Lo /tmp/node.tar.xz https://nodejs.org/dist/v22.23.2/node-v22.23.2-linux-x64.tar.xz
-      - echo "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307  /tmp/node.tar.xz" | sha256sum -c -
-      - tar xJf /tmp/node.tar.xz -C /opt
-      - ln -sf /opt/node-v22.23.2-linux-x64/bin/node /usr/local/bin/node
-      - ln -sf /opt/node-v22.23.2-linux-x64/bin/npm /usr/local/bin/npm
-      - ln -sf /opt/node-v22.23.2-linux-x64/bin/npx /usr/local/bin/npx
+      # needs Node. bookworm's nodejs is 18.x, which is too old:
+      # @capacitor/cli requires >=20.0.0 and @vitejs/plugin-react requires
+      # ^20.19.0 || >=22.12.0. forky has nodejs 24.19.0 and npm 11.16.0.
+      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - apt-get update
+      - apt-get install -y -t forky nodejs npm
     init:
       # npm ci installs strictly from the committed package-lock.json, so the
       # dependency tree is reproducible. `cap sync` copies the built web assets
