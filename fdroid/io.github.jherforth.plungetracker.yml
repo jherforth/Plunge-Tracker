@@ -17,17 +17,11 @@ Builds:
     commit: e20f93720c960844c0a7aac167560b077db0c9db
     subdir: android/app
     sudo:
-      # The app is a React/Vite web app packaged with Capacitor, so the build
-      # needs Node. bookworm's nodejs is 18.x, which is too old:
-      # @capacitor/cli requires >=20.0.0 and @vitejs/plugin-react requires
-      # ^20.19.0 || >=22.12.0. forky has nodejs 24.19.0 and npm 11.16.0.
-      - echo "deb https://deb.debian.org/debian forky main" > /etc/apt/sources.list.d/forky.list
+      - cd /etc/apt
+      - echo deb https://deb.debian.org/debian forky main >>sources.list
       - apt-get update
       - apt-get install -y -t forky nodejs npm
     init:
-      # npm ci installs strictly from the committed package-lock.json, so the
-      # dependency tree is reproducible. `cap sync` copies the built web assets
-      # into android/app/src/main/assets/public, which is not committed.
       - npm ci
       - npm run build
       - npx cap sync android
