@@ -37,22 +37,25 @@
     </application>
 
     <!--
-      The only permission this app declares by hand.
+      This app requests no permissions.
 
-      (The built APK also carries a generated
-      *.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION entry, injected by AndroidX
-      Core. It is scoped to this app's own package with
-      protectionLevel="signature", so it grants nothing to anything not signed
-      with the same key.)
+      Not even INTERNET. Capacitor's template declares it, but nothing here
+      needs it: the WebView never makes a network request. Every asset is
+      served out of the APK by WebViewLocalServer.shouldInterceptRequest(),
+      which hands back a stream from AndroidProtocolHandler.openAsset() ->
+      context.getAssets().open(). The https://localhost origin is only a name,
+      required so the page counts as a secure context for IndexedDB.
 
-      INTERNET is required by Capacitor: the WebView loads the bundled app from an
-      intercepted https://localhost origin, which goes through Android's network
-      stack even though the bytes come from the APK's assets. No request reaches
-      the network - see res/xml/network_security_config.xml, which denies
-      cleartext and user-installed CAs.
+      None of the Capacitor libraries in use (@capacitor/android, filesystem,
+      share) declare permissions either, so nothing is merged back in.
 
-      Deliberately NOT requested: storage, camera, location, notifications.
-      All session data lives in the WebView's own IndexedDB (see src/lib/db.ts).
+      Deliberately NOT requested: internet, storage, camera, location,
+      notifications. Session data lives in the WebView's own IndexedDB (see
+      src/lib/db.ts) and preferences in localStorage.
+
+      The built APK still lists a generated
+      *.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION, injected by AndroidX Core.
+      It is scoped to this app's own package with protectionLevel="signature",
+      so it grants nothing to anything not signed with the same key.
     -->
-    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

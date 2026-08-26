@@ -16,9 +16,9 @@ Everything happens on your device. There is no account to create, no sync servic
 
 <b>Privacy</b>
 
-Sessions are stored in the app's own private storage and never leave the device. The only permission the app asks for is INTERNET, which its WebView requires in order to load the interface that is bundled inside the app itself. No request is ever made to the network, and the app ships a network security configuration that blocks cleartext traffic and refuses user-installed certificate authorities.
+Sessions are stored in the app's own private storage and never leave the device. The app asks for no permissions at all - not even internet access. It cannot reach the network, because it was never granted the ability to. The interface is read directly out of the app package, so there is nothing to fetch.
 
-You may also see a second entry, DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION. That one is generated automatically by the AndroidX libraries, is scoped to this app's own package, and can only ever be held by code signed with the same key. It grants no access to your device or your data.
+You may still see one entry listed, DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION. That one is generated automatically by the AndroidX libraries, is scoped to this app's own package, and can only ever be held by code signed with the same key. It grants no access to your device or your data.
 
 <b>Safety</b>
 

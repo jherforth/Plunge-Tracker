@@ -7,3 +7,4 @@ First release.
 * Optional ambient soundscapes and completion chimes
 * Celsius/Fahrenheit and light/dark themes
 * Cold plunge safety guidance
+* No permissions requested at all, including no internet access

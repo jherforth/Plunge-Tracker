@@ -17,16 +17,26 @@ APK, and everything it records stays on the device:
   ([`src/lib/audio.ts`](src/lib/audio.ts)), not shipped as audio files
 - The interface font is bundled locally rather than fetched from a font CDN
 
-The only permission the app requests for itself is `INTERNET`. Capacitor
-requires it because the WebView loads the bundled interface over an intercepted
-`https://localhost` origin, which passes through Android's network stack even
-though the bytes come from the APK's own assets. Nothing is ever sent off the
-device, and
-[`network_security_config.xml`](android/app/src/main/res/xml/network_security_config.xml)
-enforces this by denying cleartext traffic and refusing user-installed
-certificate authorities.
+**The app requests no permissions at all — not even `INTERNET`.**
 
-The built APK also lists a second entry,
+Capacitor's Android template declares `INTERNET` by default, and most Capacitor
+apps ship with it, but nothing here needs it. The WebView never makes a network
+request: every asset is served straight out of the APK by
+`WebViewLocalServer.shouldInterceptRequest()`, which returns a stream from
+`AndroidProtocolHandler.openAsset()` → `context.getAssets().open()`. The
+`https://localhost` origin is only a name, required so the page counts as a
+secure context for IndexedDB. None of the Capacitor libraries in use declare
+permissions either, so nothing is merged back in.
+
+Removing it was verified on a device, not just in the manifest: the app builds,
+launches, stores sessions, and exports with the permission absent.
+
+[`network_security_config.xml`](android/app/src/main/res/xml/network_security_config.xml)
+is kept as a fail-safe. With no `INTERNET` permission it is redundant, but if
+one is ever reintroduced — by a dependency, or by regenerating the Capacitor
+template — cleartext stays denied and only the system CA store is trusted.
+
+The built APK does still list
 `io.github.jherforth.plungetracker.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`.
 That one is generated automatically by AndroidX Core, is namespaced to this
 app's own package, and is declared `protectionLevel="signature"`, so only code
