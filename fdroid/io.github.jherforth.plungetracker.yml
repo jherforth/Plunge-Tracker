@@ -29,9 +29,7 @@ Builds:
     gradle:
       - yes
     scandelete:
-      - node_modules/esbuild
-      - node_modules/@esbuild
-      - node_modules/@capacitor/cli
+      - node_modules
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
