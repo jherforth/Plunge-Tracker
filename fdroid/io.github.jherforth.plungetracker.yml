@@ -14,7 +14,7 @@ Repo: https://github.com/jherforth/Plunge-Tracker.git
 Builds:
   - versionName: 1.0.0
     versionCode: 1
-    commit: e20f93720c960844c0a7aac167560b077db0c9db
+    commit: 0ffef8ecc9584e05e92b46be8f53c840bb48faa7
     subdir: android/app
     sudo:
       - cd /etc/apt
