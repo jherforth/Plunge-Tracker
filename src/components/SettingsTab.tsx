@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, FileJson, FileSpreadsheet, ShieldAlert, Moon, Sun, Thermometer, Music, AlertTriangle, Timer } from 'lucide-react';
+import { Download, FileJson, FileSpreadsheet, ShieldAlert, Moon, Sun, Thermometer, Music, AlertTriangle, Timer, Eye } from 'lucide-react';
 import { Capacitor } from '@capacitor/core';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
@@ -10,7 +10,7 @@ import { cn, retroCard, retroButton } from '../lib/utils';
 type ExportStatus = { kind: 'idle' } | { kind: 'working' } | { kind: 'done' } | { kind: 'error'; message: string };
 
 export default function SettingsTab() {
-  const { theme, setTheme, tempUnit, setTempUnit, selectedTrack, setSelectedTrack, leadInEnabled, setLeadInEnabled } = useSettings();
+  const { theme, setTheme, tempUnit, setTempUnit, selectedTrack, setSelectedTrack, leadInEnabled, setLeadInEnabled, keepAwakeEnabled, setKeepAwakeEnabled } = useSettings();
   const [exportStatus, setExportStatus] = useState<ExportStatus>({ kind: 'idle' });
 
   const buildExport = async (format: 'json' | 'csv') => {
@@ -134,6 +134,34 @@ export default function SettingsTab() {
                 <button
                   onClick={() => setLeadInEnabled(false)}
                   className={cn("px-3 py-2 text-sm", retroButton, !leadInEnabled ? "bg-sky-400 text-black" : "bg-slate-200 dark:bg-slate-800")}
+                >
+                  OFF
+                </button>
+              </div>
+            </div>
+
+            <div className={cn("w-full flex items-center justify-between p-4 bg-white dark:bg-black", retroCard)}>
+              <div className="flex items-center space-x-3">
+                <div className="text-sky-500">
+                  <Eye size={20} />
+                </div>
+                <div className="text-sm">
+                  KEEP SCREEN ON
+                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    STOPS THE DISPLAY SLEEPING MID-PLUNGE
+                  </div>
+                </div>
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setKeepAwakeEnabled(true)}
+                  className={cn("px-3 py-2 text-sm", retroButton, keepAwakeEnabled ? "bg-sky-400 text-black" : "bg-slate-200 dark:bg-slate-800")}
+                >
+                  ON
+                </button>
+                <button
+                  onClick={() => setKeepAwakeEnabled(false)}
+                  className={cn("px-3 py-2 text-sm", retroButton, !keepAwakeEnabled ? "bg-sky-400 text-black" : "bg-slate-200 dark:bg-slate-800")}
                 >
                   OFF
                 </button>

@@ -4,6 +4,7 @@ import { cn, formatTime, retroButton, retroCard, retroBorder } from '../lib/util
 import { playTrack, stopTrack, playChime } from '../lib/audio';
 import { db } from '../lib/db';
 import { useSettings, LEAD_IN_SECONDS } from '../lib/settings';
+import { keepAwake, allowSleep } from '../lib/keepAwake';
 
 /** Marks the moment the plunge itself starts, and the moment the goal is reached. */
 const playMilestoneChime = () => playChime(1046.5, 'sine', 1.5);
@@ -13,7 +14,7 @@ const playTickChime = () => playChime(880, 'sine', 0.1);
 type Phase = 'idle' | 'leadin' | 'running';
 
 export default function TimerTab() {
-  const { tempUnit, selectedTrack, leadInEnabled } = useSettings();
+  const { tempUnit, selectedTrack, leadInEnabled, keepAwakeEnabled } = useSettings();
   const [targetTime, setTargetTime] = useState(180);
   const [waterTemperature, setWaterTemperature] = useState(tempUnit === 'F' ? 50 : 10);
   const [phase, setPhase] = useState<Phase>('idle');
@@ -37,6 +38,21 @@ export default function TimerTab() {
   const targetSeconds = targetTime;
   const progress = Math.min(elapsedSeconds / targetSeconds, 1);
   const remaining = Math.max(targetSeconds - elapsedSeconds, 0);
+
+  // Hold the screen on for the whole session, lead-in included - you are
+  // getting into cold water and will not be tapping the display. Released
+  // whenever the timer is idle, and on unmount so leaving the tab cannot
+  // strand the flag.
+  useEffect(() => {
+    if (isActive && keepAwakeEnabled) {
+      keepAwake();
+    } else {
+      allowSleep();
+    }
+    return () => {
+      allowSleep();
+    };
+  }, [isActive, keepAwakeEnabled]);
 
   // Background music belongs to the plunge itself; during the lead-in it would
   // only muddy the per-second ticks.

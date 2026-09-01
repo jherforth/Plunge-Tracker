@@ -16,6 +16,8 @@ interface SettingsContextType {
   setSelectedTrack: (t: TrackId) => void;
   leadInEnabled: boolean;
   setLeadInEnabled: (v: boolean) => void;
+  keepAwakeEnabled: boolean;
+  setKeepAwakeEnabled: (v: boolean) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -32,6 +34,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
   const [selectedTrack, setSelectedTrack] = useState<TrackId>(() => {
     return (localStorage.getItem('plungeTrack') as TrackId) || 'ice-cave';
+  });
+
+  const [keepAwakeEnabled, setKeepAwakeEnabled] = useState<boolean>(() => {
+    // Defaults on: a screen that sleeps mid-plunge hides the countdown at
+    // exactly the moment it matters.
+    return localStorage.getItem('plungeKeepAwake') !== 'false';
   });
 
   const [leadInEnabled, setLeadInEnabled] = useState<boolean>(() => {
@@ -64,8 +72,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('plungeLeadIn', String(leadInEnabled));
   }, [leadInEnabled]);
 
+  useEffect(() => {
+    localStorage.setItem('plungeKeepAwake', String(keepAwakeEnabled));
+  }, [keepAwakeEnabled]);
+
   return (
-    <SettingsContext.Provider value={{ theme, setTheme, tempUnit, setTempUnit, selectedTrack, setSelectedTrack, leadInEnabled, setLeadInEnabled }}>
+    <SettingsContext.Provider value={{ theme, setTheme, tempUnit, setTempUnit, selectedTrack, setSelectedTrack, leadInEnabled, setLeadInEnabled, keepAwakeEnabled, setKeepAwakeEnabled }}>
       {children}
     </SettingsContext.Provider>
   );
