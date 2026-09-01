@@ -8,6 +8,7 @@ Everything happens on your device. There is no account to create, no sync servic
 * An optional 10 second run-up that counts you in, so you are not already losing time while you climb into the water
 * Audible chimes, synthesised on the fly rather than shipped as recordings
 * Optional ambient soundscapes to hold your attention during a plunge
+* An option to hold the screen on, so the countdown is still there when you look up
 * Session history showing duration and water temperature
 * Export your whole history to CSV, so your data is never locked in
 * Celsius or Fahrenheit, switchable at any time

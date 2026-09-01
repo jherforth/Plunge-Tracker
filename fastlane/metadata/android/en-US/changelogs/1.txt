@@ -6,5 +6,6 @@ First release.
 * CSV and JSON export of your full history
 * Optional ambient soundscapes and completion chimes
 * Celsius/Fahrenheit and light/dark themes
+* Optional keep-screen-on so the countdown stays visible mid-plunge
 * Cold plunge safety guidance
 * No permissions requested at all, including no internet access
