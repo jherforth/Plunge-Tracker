@@ -20,9 +20,9 @@ export default function SettingsTab() {
       return { contents: JSON.stringify(data, null, 2), mimeType: 'application/json' };
     }
 
-    const csv = ['id,timestamp,durationSeconds,targetDurationSeconds,waterTemperature'];
+    const csv = ['id,timestamp,durationSeconds,targetDurationSeconds,waterTemperature,temperatureUnit'];
     data.forEach(s => {
-      csv.push(`${s.id},${s.timestamp},${s.durationSeconds},${s.targetDurationSeconds},${s.waterTemperature ?? ''}`);
+      csv.push(`${s.id},${s.timestamp},${s.durationSeconds},${s.targetDurationSeconds},${s.waterTemperature ?? ''},${s.temperatureUnit ?? ''}`);
     });
     return { contents: csv.join('\n'), mimeType: 'text/csv' };
   };

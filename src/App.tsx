@@ -52,9 +52,14 @@ export default function App() {
       
       {/* Main Content Area */}
       <main className="flex-1 relative overflow-hidden z-10">
-        {activeTab === 'timer' && <TimerTab />}
-        {activeTab === 'history' && <HistoryTab />}
-        {activeTab === 'settings' && <SettingsTab />}
+        {/*
+          Every tab stays mounted and the inactive ones are only hidden.
+          Unmounting TimerTab mid-plunge threw away the running session and
+          the target and temperature you had dialled in.
+        */}
+        <div className={cn("h-full", activeTab !== 'timer' && "hidden")}><TimerTab /></div>
+        <div className={cn("h-full", activeTab !== 'history' && "hidden")}><HistoryTab /></div>
+        <div className={cn("h-full", activeTab !== 'settings' && "hidden")}><SettingsTab /></div>
       </main>
 
       {/* Bottom Navigation */}

@@ -13,10 +13,35 @@ const playTickChime = () => playChime(880, 'sine', 0.1);
 
 type Phase = 'idle' | 'leadin' | 'running';
 
+/**
+ * Plunges shorter than this are not logged. It filters out START tapped by
+ * mistake and immediately stopped; the user is told when it happens rather
+ * than the session vanishing silently.
+ */
+const MIN_LOGGED_SECONDS = 10;
+
+const TEMP_LIMITS = { C: [0, 35], F: [32, 100] } as const;
+const clampTemp = (value: number, unit: 'C' | 'F') =>
+  Math.max(TEMP_LIMITS[unit][0], Math.min(TEMP_LIMITS[unit][1], value));
+
+const readNumber = (key: string): number | null => {
+  const raw = localStorage.getItem(key);
+  const n = raw === null ? NaN : Number(raw);
+  return Number.isFinite(n) ? n : null;
+};
+
 export default function TimerTab() {
   const { tempUnit, selectedTrack, leadInEnabled, keepAwakeEnabled } = useSettings();
-  const [targetTime, setTargetTime] = useState(180);
-  const [waterTemperature, setWaterTemperature] = useState(tempUnit === 'F' ? 50 : 10);
+  // Target and temperature persist, so the next session is not logged
+  // against a default you never chose.
+  const [targetTime, setTargetTime] = useState(() => readNumber('plungeTargetSeconds') ?? 180);
+  const [waterTemperature, setWaterTemperature] = useState(() => {
+    const stored = readNumber('plungeWaterTemp');
+    const storedUnit = localStorage.getItem('plungeWaterTempUnit');
+    if (stored !== null && storedUnit === tempUnit) return stored;
+    return tempUnit === 'F' ? 50 : 10;
+  });
+  const [notice, setNotice] = useState<{ kind: 'ok' | 'warn'; text: string } | null>(null);
   const [phase, setPhase] = useState<Phase>('idle');
   const [leadInRemaining, setLeadInRemaining] = useState(LEAD_IN_SECONDS);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -33,6 +58,27 @@ export default function TimerTab() {
   useEffect(() => {
     soundEnabledRef.current = soundEnabled;
   }, [soundEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem('plungeTargetSeconds', String(targetTime));
+  }, [targetTime]);
+
+  useEffect(() => {
+    localStorage.setItem('plungeWaterTemp', String(waterTemperature));
+    localStorage.setItem('plungeWaterTempUnit', tempUnit);
+  }, [waterTemperature, tempUnit]);
+
+  // This tab now stays mounted, so switching units in Settings must convert
+  // the dialled-in temperature rather than reinterpret it (50 F is not 50 C).
+  const prevUnitRef = useRef(tempUnit);
+  useEffect(() => {
+    if (prevUnitRef.current === tempUnit) return;
+    prevUnitRef.current = tempUnit;
+    setWaterTemperature(prev => clampTemp(
+      tempUnit === 'F' ? Math.round(prev * 9 / 5 + 32) : Math.round((prev - 32) * 5 / 9),
+      tempUnit,
+    ));
+  }, [tempUnit]);
 
   const isActive = phase !== 'idle';
   const targetSeconds = targetTime;
@@ -149,6 +195,7 @@ export default function TimerTab() {
   };
 
   const handleStart = () => {
+    setNotice(null);
     if (leadInEnabled) {
       setLeadInRemaining(LEAD_IN_SECONDS);
       setPhase('leadin');
@@ -161,9 +208,11 @@ export default function TimerTab() {
     const wasRunning = phase === 'running';
     setPhase('idle');
 
-    // Only a real plunge is worth recording. Aborting during the lead-in leaves
-    // elapsedSeconds at 0, so no session is written.
-    if (wasRunning && elapsedSeconds > 10) {
+    // Stopping during the lead-in is an abort, not a plunge: nothing to log.
+    // A plunge under MIN_LOGGED_SECONDS is skipped too, but visibly.
+    if (wasRunning && elapsedSeconds < MIN_LOGGED_SECONDS) {
+      setNotice({ kind: 'warn', text: `UNDER ${MIN_LOGGED_SECONDS}S - NOT LOGGED` });
+    } else if (wasRunning) {
       try {
         await db.sessions.add({
           timestamp: Date.now(),
@@ -172,8 +221,10 @@ export default function TimerTab() {
           waterTemperature: waterTemperature,
           temperatureUnit: tempUnit,
         });
+        setNotice({ kind: 'ok', text: `LOGGED ${formatTime(elapsedSeconds)}` });
       } catch (err) {
         console.error("Failed to save session", err);
+        setNotice({ kind: 'warn', text: 'COULD NOT SAVE SESSION' });
       }
     }
     
@@ -190,9 +241,9 @@ export default function TimerTab() {
   const adjustTemp = (delta: number) => {
     if (!isActive) {
       if (tempUnit === 'F') {
-        setWaterTemperature(prev => Math.max(32, Math.min(100, prev + delta)));
+        setWaterTemperature(prev => clampTemp(prev + delta, 'F'));
       } else {
-        setWaterTemperature(prev => Math.max(0, Math.min(35, prev + delta)));
+        setWaterTemperature(prev => clampTemp(prev + delta, 'C'));
       }
     }
   };
@@ -230,12 +281,17 @@ export default function TimerTab() {
       </div>
 
       <div className="flex flex-col items-center space-y-6 w-full max-w-sm">
+        {notice && !isActive && (
+          <p className={cn("text-xs", notice.kind === 'ok' ? "text-sky-700 dark:text-sky-300" : "text-rose-600 dark:text-rose-400")}>
+            {notice.text}
+          </p>
+        )}
         {!isActive && (
           <div className="flex flex-col space-y-4 w-full">
             <div className={cn("flex items-center justify-between p-3", retroCard)}>
                <div className="flex items-center space-x-2">
                  <button onClick={() => adjustTime(-1)} className={cn("p-2", retroButton)}> <Minus size={20}/> </button>
-                 <div className="text-lg text-center tabular-nums w-20">{formatTime(targetTime)}</div>
+                 <div className="text-lg text-center tabular-nums min-w-24 whitespace-nowrap">{formatTime(targetTime)}</div>
                  <button onClick={() => adjustTime(1)} className={cn("p-2", retroButton)}> <Plus size={20}/> </button>
                </div>
                <span className="text-sm pr-2">TIME</span>
@@ -244,7 +300,7 @@ export default function TimerTab() {
             <div className={cn("flex items-center justify-between p-3", retroCard)}>
                <div className="flex items-center space-x-2">
                  <button onClick={() => adjustTemp(-1)} className={cn("p-2", retroButton)}> <Minus size={20}/> </button>
-                 <div className="text-lg text-center tabular-nums w-20 flex items-center justify-center">
+                 <div className="text-lg text-center tabular-nums min-w-24 whitespace-nowrap flex items-center justify-center">
                    <Snowflake size={16} className="mr-1 text-sky-500" />
                    {waterTemperature}°{tempUnit}
                  </div>
