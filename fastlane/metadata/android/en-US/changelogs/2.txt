@@ -1,0 +1,1 @@
+* The app icon now shows on F-Droid. It had been missing from the listing because the icon was vector-only, which F-Droid cannot display. Nothing changes on your device.
