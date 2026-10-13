@@ -1,6 +1,6 @@
 ext {
-    // Android 8.0. Required for adaptive launcher icons, which let the icon set
-    // be pure XML vectors with no binary image files in the repository.
+    // Android 8.0, so every device uses the adaptive (vector) launcher icon.
+    // The PNG mipmaps are still needed: F-Droid cannot display XML icons.
     minSdkVersion = 26
     compileSdkVersion = 35
     targetSdkVersion = 35

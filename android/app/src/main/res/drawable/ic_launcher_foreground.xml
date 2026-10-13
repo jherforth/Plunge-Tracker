@@ -2,10 +2,13 @@
 <!--
   Plunge Tracker launcher icon: a snowflake over cold water.
 
-  Drawn as a vector so the icon set contains no binary image files at all,
-  which keeps the repository auditable for F-Droid. Replaces the default
-  Capacitor logo that `npx cap add android` generates, which is Ionic's
-  trademark and must not ship as this app's identity.
+  This vector is the source of truth. Devices render it as an adaptive icon
+  (mipmap-anydpi-v26). The PNGs in mipmap-*dpi exist only because F-Droid
+  skips XML icons when building its listing; they are rasterized from this
+  file's path data, so regenerate them whenever the artwork changes.
+
+  Replaces the default Capacitor logo that `npx cap add android` generates,
+  which is Ionic's trademark and must not ship as this app's identity.
 
   Artwork is original and covered by the project's MIT license.
 -->
